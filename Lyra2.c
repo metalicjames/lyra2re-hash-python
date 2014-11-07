@@ -73,7 +73,7 @@ inline void print64(uint64_t *v) {
  *
  * @return 0 if the key is generated correctly; -1 if there is an error (usually due to lack of memory for allocation)
  */
-int LYRA2(void *K, unsigned int kLen, const void *pwd, unsigned int pwdlen, const void *salt, unsigned int saltlen, unsigned int timeCost, unsigned int nRows, unsigned int nCols) {
+int LYRA2(void *K, uint64_t kLen, const void *pwd, uint64_t pwdlen, const void *salt, uint64_t saltlen, uint64_t timeCost, uint64_t nRows, uint64_t nCols) {
 
     //============================= Basic variables ============================//
     int64_t row = 2; //index of row to be processed
@@ -112,7 +112,7 @@ int LYRA2(void *K, unsigned int kLen, const void *pwd, unsigned int pwdlen, cons
     //but this ensures that the password copied locally will be overwritten as soon as possible
 
     //First, we clean enough blocks for the password, salt, basil and padding
-    uint64_t nBlocksInput = ((saltlen + pwdlen + 6 * sizeof (int)) / BLOCK_LEN_BLAKE2_SAFE_BYTES) + 1;
+    uint64_t nBlocksInput = ((saltlen + pwdlen + 6 * sizeof (uint64_t)) / BLOCK_LEN_BLAKE2_SAFE_BYTES) + 1;
     byte *ptrByte = (byte*) wholeMatrix;
     memset(ptrByte, 0, nBlocksInput * BLOCK_LEN_BLAKE2_SAFE_BYTES);
 
@@ -125,18 +125,18 @@ int LYRA2(void *K, unsigned int kLen, const void *pwd, unsigned int pwdlen, cons
     ptrByte += saltlen;
 
     //Concatenates the basil: every integer passed as parameter, in the order they are provided by the interface
-    memcpy(ptrByte, &kLen, sizeof (int));
-    ptrByte += sizeof (int);
-    memcpy(ptrByte, &pwdlen, sizeof (int));
-    ptrByte += sizeof (int);
-    memcpy(ptrByte, &saltlen, sizeof (int));
-    ptrByte += sizeof (int);
-    memcpy(ptrByte, &timeCost, sizeof (int));
-    ptrByte += sizeof (int);
-    memcpy(ptrByte, &nRows, sizeof (int));
-    ptrByte += sizeof (int);
-    memcpy(ptrByte, &nCols, sizeof (int));
-    ptrByte += sizeof (int);
+    memcpy(ptrByte, &kLen, sizeof (uint64_t));
+    ptrByte += sizeof (uint64_t);
+    memcpy(ptrByte, &pwdlen, sizeof (uint64_t));
+    ptrByte += sizeof (uint64_t);
+    memcpy(ptrByte, &saltlen, sizeof (uint64_t));
+    ptrByte += sizeof (uint64_t);
+    memcpy(ptrByte, &timeCost, sizeof (uint64_t));
+    ptrByte += sizeof (uint64_t);
+    memcpy(ptrByte, &nRows, sizeof (uint64_t));
+    ptrByte += sizeof (uint64_t);
+    memcpy(ptrByte, &nCols, sizeof (uint64_t));
+    ptrByte += sizeof (uint64_t);
 
     //Now comes the padding
     *ptrByte = 0x80; //first byte of padding: right after the password
@@ -197,7 +197,7 @@ int LYRA2(void *K, unsigned int kLen, const void *pwd, unsigned int pwdlen, cons
   	    //Selects a pseudorandom index row*
   	    //------------------------------------------------------------------------------------------
   	    //rowa = ((unsigned int)state[0]) & (nRows-1);	//(USE THIS IF nRows IS A POWER OF 2)
-  	    rowa = ((unsigned int) (state[0])) % nRows; //(USE THIS FOR THE "GENERIC" CASE)
+  	    rowa = ((uint64_t) (state[0])) % nRows; //(USE THIS FOR THE "GENERIC" CASE)
   	    //------------------------------------------------------------------------------------------
 
   	    //Performs a reduced-round duplexing operation over M[row*] XOR M[prev], updating both M[row*] and M[row]

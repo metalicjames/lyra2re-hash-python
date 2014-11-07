@@ -20,6 +20,8 @@
 #ifndef LYRA2_H_
 #define LYRA2_H_
 
+#include <stdint.h>
+
 typedef unsigned char byte ;
 
 //Block length required so Blake2's Initialization Vector (IV) is not overwritten (THIS SHOULD NOT BE MODIFIED)
@@ -43,7 +45,7 @@ typedef unsigned char byte ;
 #define ROW_LEN_BYTES (ROW_LEN_INT64 * 8)        //Number of bytes per row
 
 
-int LYRA2(void *K, unsigned int kLen, const void *pwd, unsigned int pwdlen, const void *salt, unsigned int saltlen, unsigned int timeCost, unsigned int nRows, unsigned int nCols);
+int LYRA2(void *K, uint64_t kLen, const void *pwd, uint64_t pwdlen, const void *salt, uint64_t saltlen, uint64_t timeCost, uint64_t nRows, uint64_t nCols);
 
 int PHS(void *out, size_t outlen, const void *in, size_t inlen, const void *salt, size_t saltlen, unsigned int t_cost, unsigned int m_cost);
 
