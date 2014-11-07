@@ -25,36 +25,6 @@
 #include "Sponge.h"
 
 /**
- * Executes Lyra2 based on the G function from Blake2b. The number of columns of the memory matrix is set to nCols = 64.
- * This version supports salts and passwords whose combined length is smaller than the size of the memory matrix,
- * (i.e., (nRows x nCols x b) bits, where "b" is the underlying sponge's bitrate). In this implementation, the "basil"
- * is composed by all integer parameters (treated as type "unsigned int") in the order they are provided, plus the value
- * of nCols, (i.e., basil = kLen || pwdlen || saltlen || timeCost || nRows || nCols).
- *
- * @param out The derived key to be output by the algorithm
- * @param outlen Desired key length
- * @param in User password
- * @param inlen Password length
- * @param salt Salt
- * @param saltlen Salt length
- * @param t_cost Parameter to determine the processing time (T)
- * @param m_cost Memory cost parameter (defines the number of rows of the memory matrix, R)
- *
- * @return 0 if the key is generated correctly; -1 if there is an error (usually due to lack of memory for allocation)
- */
-int PHS(void *out, size_t outlen, const void *in, size_t inlen, const void *salt, size_t saltlen, unsigned int t_cost, unsigned int m_cost) {
-    return LYRA2(out, outlen, in, inlen, salt, saltlen, t_cost, m_cost, N_COLS);
-}
-
-inline void print64(uint64_t *v) {
-    int i;
-    for (i = 0; i < 16; i++) {
-	printf("%ld|", v[i]);
-    }
-    printf("\n");
-}
-
-/**
  * Executes Lyra2 based on the G function from Blake2b. This version supports salts and passwords
  * whose combined length is smaller than the size of the memory matrix, (i.e., (nRows x nCols x b) bits,
  * where "b" is the underlying sponge's bitrate). In this implementation, the "basil" is composed by all
