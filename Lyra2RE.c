@@ -40,30 +40,30 @@
 
 void lyra2re_hash(const char* input, char* output)
 {
-    sph_blake512_context     ctx_blake;
-    sph_groestl512_context   ctx_groestl;
-    sph_keccak512_context    ctx_keccak;
-    sph_skein512_context     ctx_skein;
+    sph_blake256_context     ctx_blake;
+    sph_groestl256_context   ctx_groestl;
+    sph_keccak256_context    ctx_keccak;
+    sph_skein256_context     ctx_skein;
 
-    uint32_t hashA[16], hashB[16];
+    uint32_t hashA[8], hashB[8];
 
-    sph_blake512_init(&ctx_blake);
-    sph_blake512 (&ctx_blake, input, 80);
-    sph_blake512_close (&ctx_blake, hashA);	
+    sph_blake256_init(&ctx_blake);
+    sph_blake256 (&ctx_blake, input, 32);
+    sph_blake256_close (&ctx_blake, hashA);	
 	
-    sph_keccak512_init(&ctx_keccak);
-    sph_keccak512 (&ctx_keccak,hashA, 64); 
-    sph_keccak512_close(&ctx_keccak, hashB); 
+    sph_keccak256_init(&ctx_keccak);
+    sph_keccak256 (&ctx_keccak,hashA, 32); 
+    sph_keccak256_close(&ctx_keccak, hashB); 
 	
-	LYRA2((void*)hashA, 64, (const void*)hashB, 64, (const void*)hashB, 64, 1, 8, 8);
+	LYRA2((void*)hashA, 32, (const void*)hashB, 32, (const void*)hashB, 32, 1, 8, 8);
 	
-	sph_skein512_init(&ctx_skein);
-    sph_skein512 (&ctx_skein, hashA, 64); 
-    sph_skein512_close(&ctx_skein, hashB); 
+	sph_skein256_init(&ctx_skein);
+    sph_skein256 (&ctx_skein, hashA, 32); 
+    sph_skein256_close(&ctx_skein, hashB); 
 
-    sph_groestl512_init(&ctx_groestl);
-    sph_groestl512 (&ctx_groestl, hashB, 64); 
-    sph_groestl512_close(&ctx_groestl, hashA); 
+    sph_groestl256_init(&ctx_groestl);
+    sph_groestl256 (&ctx_groestl, hashB, 32); 
+    sph_groestl256_close(&ctx_groestl, hashA); 
 
 	memcpy(output, hashA, 32);
 }
