@@ -24,6 +24,29 @@
 #include "Lyra2.h"
 #include "Sponge.h"
 
+void toHex(const char* input, char* output, int length)
+{
+	/* target buffer should be large enough */
+    char str[length];
+    char in[length];
+
+	memcpy(in, input, length);
+
+    unsigned char * pin = in;
+    const char * hex = "0123456789abcdef";
+    char * pout = str;
+    int i = 0;
+    for(; i < sizeof(input)-1; ++i){
+        *pout++ = hex[(*pin>>4)&0xF];
+        *pout++ = hex[(*pin++)&0xF];
+    }
+    *pout++ = hex[(*pin>>4)&0xF];
+    *pout++ = hex[(*pin)&0xF];
+    *pout = 0;
+
+    memcpy(output, str, sizeof(str));
+}
+
 /**
  * Executes Lyra2 based on the G function from Blake2b. This version supports salts and passwords
  * whose combined length is smaller than the size of the memory matrix, (i.e., (nRows x nCols x b) bits,
@@ -59,10 +82,12 @@ int LYRA2(void *K, uint64_t kLen, const void *pwd, uint64_t pwdlen, const void *
     //========== Initializing the Memory Matrix and pointers to it =============//
     //Tries to allocate enough space for the whole memory matrix
     i = (int64_t) ((int64_t) nRows * (int64_t) ROW_LEN_BYTES);
+    printf("wholeMatrix size: %i\n", i);
     uint64_t *wholeMatrix = malloc(i);
     if (wholeMatrix == NULL) {
       return -1;
     }
+    memset(wholeMatrix, 0, i);
 
     //Allocates pointers to each row of the matrix
     uint64_t **memMatrix = malloc(nRows * sizeof (uint64_t*));
@@ -115,6 +140,7 @@ int LYRA2(void *K, uint64_t kLen, const void *pwd, uint64_t pwdlen, const void *
     *ptrByte ^= 0x01; //last byte of padding: at the end of the last incomplete block
     //==========================================================================/
 
+
     //======================= Initializing the Sponge State ====================//
     //Sponge state: 16 uint64_t, BLOCK_LEN_INT64 words of them for the bitrate (b) and the remainder for the capacity (c)
     uint64_t *state = malloc(16 * sizeof (uint64_t));
@@ -122,6 +148,9 @@ int LYRA2(void *K, uint64_t kLen, const void *pwd, uint64_t pwdlen, const void *
       return -1;
     }
     initState(state);
+
+    char* hexstring;
+
     //==========================================================================/
 
     //================================ Setup Phase =============================//
@@ -130,11 +159,31 @@ int LYRA2(void *K, uint64_t kLen, const void *pwd, uint64_t pwdlen, const void *
     for (i = 0; i < nBlocksInput; i++) {
       absorbBlockBlake2Safe(state, ptrWord); //absorbs each block of pad(pwd || salt || basil)
       ptrWord += BLOCK_LEN_BLAKE2_SAFE_BYTES; //goes to next block of pad(pwd || salt || basil)
+      hexstring = malloc(sizeof (uint64_t));
+	  toHex((const char*)ptrWord, hexstring, sizeof (uint64_t));
+	  printf("ptrWord: %s\n", hexstring);
+	  free(hexstring);
     }
+
+    hexstring = malloc(16 * sizeof (uint64_t));
+	toHex((const char*)state, hexstring, 16 * sizeof (uint64_t));
+	printf("state: %s\n", hexstring);
+	free(hexstring);
 
     //Initializes M[0] and M[1]
     reducedSqueezeRow0(state, memMatrix[0]); //The locally copied password is most likely overwritten here
+
+    hexstring = malloc(16 * sizeof (uint64_t));
+	toHex((const char*)state, hexstring, 16 * sizeof (uint64_t));
+	printf("state: %s\n", hexstring);
+	free(hexstring);
+
     reducedDuplexRow1(state, memMatrix[0], memMatrix[1]);
+
+    hexstring = malloc(16 * sizeof (uint64_t));
+	toHex((const char*)state, hexstring, 16 * sizeof (uint64_t));
+	printf("state: %s\n", hexstring);
+	free(hexstring);
 
     do {
       //M[row] = rand; //M[row*] = M[row*] XOR rotW(rand)
@@ -189,6 +238,12 @@ int LYRA2(void *K, uint64_t kLen, const void *pwd, uint64_t pwdlen, const void *
     //============================ Wrap-up Phase ===============================//
     //Absorbs the last block of the memory matrix
     absorbBlock(state, memMatrix[rowa]);
+
+    hexstring = malloc(16 * sizeof (uint64_t));
+	toHex((const char*)state, hexstring, 16 * sizeof (uint64_t));
+	printf("state: %s\n", hexstring);
+	free(hexstring);
+
 
     //Squeezes the key
     squeeze(state, K, kLen);
