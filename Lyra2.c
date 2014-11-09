@@ -24,29 +24,6 @@
 #include "Lyra2.h"
 #include "Sponge.h"
 
-void toHex(const char* input, char* output, int length)
-{
-	/* target buffer should be large enough */
-    char str[length];
-    char in[length];
-
-	memcpy(in, input, length);
-
-    unsigned char * pin = in;
-    const char * hex = "0123456789abcdef";
-    char * pout = str;
-    int i = 0;
-    for(; i < sizeof(input)-1; ++i){
-        *pout++ = hex[(*pin>>4)&0xF];
-        *pout++ = hex[(*pin++)&0xF];
-    }
-    *pout++ = hex[(*pin>>4)&0xF];
-    *pout++ = hex[(*pin)&0xF];
-    *pout = 0;
-
-    memcpy(output, str, sizeof(str));
-}
-
 /**
  * Executes Lyra2 based on the G function from Blake2b. This version supports salts and passwords
  * whose combined length is smaller than the size of the memory matrix, (i.e., (nRows x nCols x b) bits,

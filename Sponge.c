@@ -20,7 +20,6 @@
  */
 #include <string.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <time.h>
 #include "Sponge.h"
 #include "Lyra2.h"
