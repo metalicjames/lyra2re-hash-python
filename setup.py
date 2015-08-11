@@ -1,7 +1,9 @@
 from distutils.core import setup, Extension
 
 lyra2re2_hash_module = Extension('lyra2re2_hash',
-                               sources = ['lyra2re2module.c',
+                               sources = [
+										  'lyra2remodule.c',
+										  'lyra2re2module.c',
                                           'Lyra2RE.c',
 										  'Sponge.c',
 										  'Lyra2.c',
@@ -17,3 +19,4 @@ setup (name = 'lyra2re2_hash',
        version = '1.0',
        description = 'Bindings for Lyra2RE2 proof of work used by Vertcoin',
        ext_modules = [lyra2re2_hash_module])
+
