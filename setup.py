@@ -1,4 +1,4 @@
-from distutils.core import setup, Extension
+from setuptools import setup, Extension
 
 lyra2re2_hash_module = Extension('lyra2re2_hash',
                                sources = [
@@ -30,7 +30,10 @@ lyra2re_hash_module = Extension('lyra2re_hash',
 
 
 setup (name = 'lyra2re2_hash',
-       version = '1.1',
+       version = '1.1.2',
+       author_email = 'jameslovejoy1@gmail.com',
+       author = 'James Lovejoy',
+       url = 'https://github.com/metalicjames/lyra2re-hash-python',
        description = 'Bindings for Lyra2RE2 proof of work used by Vertcoin',
        ext_modules = [lyra2re2_hash_module, lyra2re_hash_module])
 
