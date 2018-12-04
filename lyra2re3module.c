@@ -46,7 +46,7 @@ static struct PyModuleDef Lyra2RE3Module = {
 };
 
 PyMODINIT_FUNC PyInit_lyra2re3_hash(void) {
-    return PyModule_Create(&Lyra2RE2Module);
+    return PyModule_Create(&Lyra2RE3Module);
 }
 
 #else
