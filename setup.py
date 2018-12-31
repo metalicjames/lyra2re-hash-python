@@ -31,7 +31,7 @@ lyra2re_hash_module = Extension('lyra2re_hash',
 
 
 setup (name = 'lyra2re2_hash',
-       version = '1.2.0',
+       version = '1.2.1',
        author_email = 'jameslovejoy1@gmail.com',
        author = 'James Lovejoy',
        url = 'https://github.com/metalicjames/lyra2re-hash-python',
